@@ -1,8 +1,7 @@
 const express = require("express");
 const app = express();
-
 const cron = require('node-cron');
-
+const { db } = require("./firebase.js")
 
 let scheduledJob = ""
 
@@ -17,7 +16,15 @@ app.get("/", (req, res) => {
     res.sendStatus(200)
 })
 
-// schedule path GET
+// "/firebase" path GET
+app.get("/firebase", async (req, res) => {
+    console.log("firebase")
+    const quoteRef = db.collection('quote').doc("quotes");
+    const doc = await quoteRef.get()
+    res.status(200).send(doc.data())
+})
+
+// "schedule" path GET
 app.get("/schedule", (req, res) => {
     //start scheduled job
     scheduledJob = cron.schedule('*/3 * * * * *', () => {
@@ -30,7 +37,7 @@ app.get("/schedule", (req, res) => {
     res.sendStatus(200);
 })
 
-// schedule path GET
+// "schedule" path GET
 app.get("/schedule/stop", (req, res) => {
     //stop scheduled job
     if (scheduledJob != ""){
@@ -73,7 +80,6 @@ app.get("/rendervar", (req, res) => {
 // Create user router and link it to '/users' path 
 const userRouter = require('./routes/users')
 app.use('/users', userRouter)
-
 
 
 //npm run devStart
