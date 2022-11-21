@@ -1,14 +1,21 @@
+//requiring module
 const { initializeApp, cert } = require('firebase-admin/app') 
 const { getFirestore } = require('firebase-admin/firestore')
 
+//https://youtu.be/LefcqnZHYeg?t=178
+
+// saving cred.js in var for init
 const serviceAccount = require('./cred.json')
 
+//init firebase with service acc cred
 initializeApp({
   credential: cert(serviceAccount)
 })
 
+//init firestore noSQL db
 const db = getFirestore()
 
+//dev config cred
 const firebaseConfig = {
   apiKey: "AIzaSyCF3L6xUrEcoRHdrLW0ADKs36XnpmVBGy0",
   authDomain: "test-project-c297f.firebaseapp.com",
@@ -19,4 +26,5 @@ const firebaseConfig = {
   measurementId: "G-B5W9FHHSMY"
 };
 
+//export firestore module
 module.exports = {db}

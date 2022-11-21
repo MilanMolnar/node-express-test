@@ -1,0 +1,21 @@
+###CREATE
+POST http://localhost:3000/firebase/add HTTP/1.1
+Content-Type: application/json
+
+{
+    "quote" : "quote-test5"
+}
+
+
+###UPDATE
+PATCH http://localhost:3000/firebase/update HTTP/1.1
+Content-Type: application/json
+
+{
+    "id" : "a6325a62-3bd6-2daf-9327-1146774b4d32",
+    "newQuote" : "updated-quote2"
+}
+
+
+###LIST
+GET http://localhost:3000/firebase HTTP/1.1

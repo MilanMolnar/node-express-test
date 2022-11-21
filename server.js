@@ -1,9 +1,20 @@
 const express = require("express");
 const app = express();
+app.use(express.json());
 const cron = require('node-cron');
 const { db } = require("./firebase.js")
 
 let scheduledJob = ""
+
+let guid = () => {
+    let s4 = () => {
+        return Math.floor((1 + Math.random()) * 0x10000)
+            .toString(16)
+            .substring(1);
+    }
+    //return id of format 'aaaaaaaa'-'aaaa'-'aaaa'-'aaaa'-'aaaaaaaaaaaa'
+    return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+}
 
 // set npm view engine to: ejs
 app.set("view engine", "ejs")
@@ -22,6 +33,39 @@ app.get("/firebase", async (req, res) => {
     const quoteRef = db.collection('quote').doc("quotes");
     const doc = await quoteRef.get()
     res.status(200).send(doc.data())
+})
+
+
+// "/firebase/add" path POST
+app.post("/firebase/add", async (req, res) => {
+    console.log("firebase-add")
+    //Generate GUID for unique identidfier in our noSQL
+    const quoteId = guid()
+    //retrieve quote field from json request body
+    const {quote} = req.body
+    //init reference to the noSQL collection
+    const quoteRef = db.collection('quote').doc("quotes");
+    //updating reference with req body vaules
+    const res2 = await quoteRef.update({
+        [quoteId] : quote
+    }) 
+    res.status(201)
+})
+
+
+
+// "/firebase/update" path PATCH
+app.patch("/firebase/update", async (req, res) => {
+    console.log("firebase-update")
+    //retrieve quote field from json request body
+    const {id, newQuote} = req.body
+    //init reference to the noSQL collection
+    const quoteRef = db.collection('quote').doc("quotes");
+    //updating reference with req body vaules
+    const res2 = await quoteRef.update({
+        [id] : newQuote
+    }) 
+    res.status(201)
 })
 
 // "schedule" path GET
@@ -82,5 +126,5 @@ const userRouter = require('./routes/users')
 app.use('/users', userRouter)
 
 
-//npm run devStart
+//npm run devStart listening on port 3000
 app.listen(3000)
