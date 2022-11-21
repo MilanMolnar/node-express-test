@@ -19,3 +19,12 @@ Content-Type: application/json
 
 ###LIST
 GET http://localhost:3000/firebase HTTP/1.1
+
+
+###DELETE
+DELETE http://localhost:3000/firebase/delete HTTP/1.1
+Content-Type: application/json
+
+{
+    "id" : "a6325a62-3bd6-2daf-9327-1146774b4d32"
+}

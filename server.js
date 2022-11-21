@@ -1,4 +1,5 @@
 const express = require("express");
+const { FieldValue } = require("firebase-admin/firestore");
 const app = express();
 app.use(express.json());
 const cron = require('node-cron');
@@ -57,13 +58,28 @@ app.post("/firebase/add", async (req, res) => {
 // "/firebase/update" path PATCH
 app.patch("/firebase/update", async (req, res) => {
     console.log("firebase-update")
-    //retrieve quote field from json request body
+    //retrieve id and new quote field from json request body
     const {id, newQuote} = req.body
     //init reference to the noSQL collection
     const quoteRef = db.collection('quote').doc("quotes");
     //updating reference with req body vaules
     const res2 = await quoteRef.update({
         [id] : newQuote
+    }) 
+    res.status(201)
+})
+
+
+// "/firebase/delete" path DELETE
+app.delete("/firebase/delete", async (req, res) => {
+    console.log("firebase-delete")
+    //retrieve id field from json request body
+    const {id} = req.body
+    //init reference to the noSQL collection
+    const quoteRef = db.collection('quote').doc("quotes");
+    //updating reference with req body vaules
+    const res2 = await quoteRef.update({
+        [id] : FieldValue.delete()
     }) 
     res.status(201)
 })
