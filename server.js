@@ -1,14 +1,42 @@
-const express = require("express")
-const app = express()
+const express = require("express");
+const app = express();
+
+const cron = require('node-cron');
+
+let scheduledJob = ""
 
 // set npm view engine to: ejs
 app.set("view engine", "ejs")
+
 
 // root path GET
 app.get("/", (req, res) => {
     console.log("get-log")
     //send 200OK back
     res.sendStatus(200)
+})
+
+// schedule path GET
+app.get("/schedule", (req, res) => {
+    //start scheduled job
+    scheduledJob = cron.schedule('*/3 * * * * *', () => {
+        var ts = new Date();
+        console.log("schedule: " + ts.toGMTString())
+    });
+
+    console.log("schedule start")
+    scheduledJob.start();
+    res.sendStatus(200);
+})
+
+// schedule path GET
+app.get("/schedule/stop", (req, res) => {
+    //stop scheduled job
+    if (scheduledJob != ""){
+        console.log("schedule stop")
+        scheduledJob.stop();
+    }
+    res.sendStatus(200);
 })
 
 // "/error" path GET
@@ -44,6 +72,8 @@ app.get("/rendervar", (req, res) => {
 // Create user router and link it to '/users' path 
 const userRouter = require('./routes/users')
 app.use('/users', userRouter)
+
+
 
 //npm run devStart
 app.listen(3000)
