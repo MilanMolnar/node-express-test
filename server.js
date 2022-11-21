@@ -28,61 +28,6 @@ app.get("/", (req, res) => {
     res.sendStatus(200)
 })
 
-// "/firebase" path GET
-app.get("/firebase", async (req, res) => {
-    console.log("firebase")
-    const quoteRef = db.collection('quote').doc("quotes");
-    const doc = await quoteRef.get()
-    res.status(200).send(doc.data())
-})
-
-
-// "/firebase/add" path POST
-app.post("/firebase/add", async (req, res) => {
-    console.log("firebase-add")
-    //Generate GUID for unique identidfier in our noSQL
-    const quoteId = guid()
-    //retrieve quote field from json request body
-    const {quote} = req.body
-    //init reference to the noSQL collection
-    const quoteRef = db.collection('quote').doc("quotes");
-    //updating reference with req body vaules
-    const res2 = await quoteRef.update({
-        [quoteId] : quote
-    }) 
-    res.status(201)
-})
-
-
-
-// "/firebase/update" path PATCH
-app.patch("/firebase/update", async (req, res) => {
-    console.log("firebase-update")
-    //retrieve id and new quote field from json request body
-    const {id, newQuote} = req.body
-    //init reference to the noSQL collection
-    const quoteRef = db.collection('quote').doc("quotes");
-    //updating reference with req body vaules
-    const res2 = await quoteRef.update({
-        [id] : newQuote
-    }) 
-    res.status(201)
-})
-
-
-// "/firebase/delete" path DELETE
-app.delete("/firebase/delete", async (req, res) => {
-    console.log("firebase-delete")
-    //retrieve id field from json request body
-    const {id} = req.body
-    //init reference to the noSQL collection
-    const quoteRef = db.collection('quote').doc("quotes");
-    //updating reference with req body vaules
-    const res2 = await quoteRef.update({
-        [id] : FieldValue.delete()
-    }) 
-    res.status(201)
-})
 
 // "schedule" path GET
 app.get("/schedule", (req, res) => {
@@ -135,6 +80,11 @@ app.get("/rendervar", (req, res) => {
     // set res to render 'views/index.ejs'
     res.render("index", {text : "text-var"})
 })
+
+
+// Create firebase router and link it to '/firebase' path 
+const firebaseRouter = require('./routes/firebaseroutes')
+app.use('/firebase', firebaseRouter)
 
 
 // Create user router and link it to '/users' path 
